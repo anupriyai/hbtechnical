@@ -84,25 +84,21 @@ export default function ReviewsPage() {
       });
   }, []);
 
-  // **Filtering Logic**
   useEffect(() => {
     let filtered = kdramas;
 
-    // **Genre Filtering**
     if (selectedGenres.length > 0) {
       filtered = filtered.filter((drama) =>
         drama.Genres?.split(/,\s*/).some((genre) => selectedGenres.includes(genre.trim()))
       );
     }
 
-    // **Year Range Filtering**
     filtered = filtered.filter(
       (drama) =>
         Number(drama["Year Released"]) >= yearRange[0] &&
         Number(drama["Year Released"]) <= yearRange[1]
     );
 
-    // **Tag Filtering**
     if (selectedTags.length > 0) {
       filtered = filtered.filter((drama) =>
         drama.Tags?.split(/,\s*/).some((tag) => selectedTags.includes(tag.trim()))
@@ -112,7 +108,6 @@ export default function ReviewsPage() {
     setFilteredDramas(filtered);
   }, [selectedGenres, yearRange, selectedTags, kdramas]);
 
-  // **Search Tag Filtering**
   useEffect(() => {
     if (searchTag.trim() === "") {
       setFilteredTags(tags.slice(0, 10));
@@ -127,7 +122,6 @@ export default function ReviewsPage() {
 
   return (
     <div className="font-inconsolata flex min-h-screen">
-      {/* SIDEBAR FILTERS */}
       <aside className="w-1/4 bg-gray-900 text-white p-6 min-h-screen rounded-lg">
         <h2 className="text-2xl font-bold mb-4 text-indigo-400">filters</h2>
 
