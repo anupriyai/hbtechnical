@@ -2,9 +2,13 @@
 import { useState, useEffect } from "react";
 import Papa from "papaparse";
 import StatCard from "../components/StatCard";
+import GenrePieChart from "../components/GenrePieChart";
+import RatingHistogram from "../components/RatingHistogram";
+import TotalMinutesWatched from "../components/TotalMinutesWatched";
 import { TvIcon, FireIcon, StarIcon } from "@heroicons/react/24/solid";
 
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQG-VDV6Ze0RTQcFP22p7hPcWVZCumyQrSqJFzI0InaJmGPAPbr8ehQoBauDQOE6ypmsHpIa5qpC1AJ/pub?output=csv&gid=856476277";
+const SHEET_2_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQG-VDV6Ze0RTQcFP22p7hPcWVZCumyQrSqJFzI0InaJmGPAPbr8ehQoBauDQOE6ypmsHpIa5qpC1AJ/pub?output=csv&gid=856476277";
+const SHEET_1_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQG-VDV6Ze0RTQcFP22p7hPcWVZCumyQrSqJFzI0InaJmGPAPbr8ehQoBauDQOE6ypmsHpIa5qpC1AJ/pub?output=csv&gid=0";
 
 interface WatchHistoryEntry {
   Title: string;
@@ -25,7 +29,7 @@ export default function KDramaStatsPage() {
   });
 
   useEffect(() => {
-    fetch(CSV_URL)
+    fetch(SHEET_2_URL)
       .then((response) => response.text())
       .then((csvText) => {
         Papa.parse<WatchHistoryEntry>(csvText, {
@@ -34,16 +38,14 @@ export default function KDramaStatsPage() {
           complete: (result) => {
             console.log("Fetched Data from Sheet 2:", result.data);
         
-            // Explicitly cast result.data as WatchHistoryEntry[]
             const rawData = result.data as WatchHistoryEntry[];
-        
             if (!rawData || rawData.length === 0) {
               console.error("Sheet 2 data is empty or malformed!");
               return;
             }
         
             const watchHistory = rawData.map((row) => ({
-              title: row.Title.split(":")[0].trim(), // Extracts the show name
+              title: row.Title.split(":")[0].trim(),
               date: row["Date Watched"].trim(),
             }));
 
@@ -105,6 +107,13 @@ export default function KDramaStatsPage() {
           description={`${stats.mostWatchedShow.count} episodes`}
           icon={<StarIcon className="h-8 w-8 text-indigo-500" />}
         />
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl mt-12">
+        <GenrePieChart />
+        <RatingHistogram />
+        <TotalMinutesWatched />
       </div>
     </div>
   );
