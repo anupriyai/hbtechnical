@@ -1,6 +1,6 @@
 ##  **My K-Drama Hub**   
 
-[![Watch the Demo]([https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg](https://drive.google.com/file/d/1w2ZyMyaU0jy35BGOhXl59PERvuDMU2Uv/view?usp=sharing))](https://drive.google.com/file/d/1DGY4nXVmgCma3LeznRj2Za5PsoLTY9KF/view?usp=sharing)
+[![Watch the Demo](https://github.com/user-attachments/assets/dbb459b3-30ca-40e2-bc85-a3204d207940)](https://github.com/user-attachments/assets/9e74032f-acf6-44b4-84c6-b95edc885f9a)
 
 ###  **Motivation**  
 I've always wanted a place where I could **store and review** the K-Dramas I've watched. While music streaming services like **Spotify Wrapped** give you insights into your listening habits, I wished for something similar—but for the TV shows I binge!  
