@@ -18,7 +18,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={inconsolata.variable}>
-      <body className="relative min-h-screen w-full overflow-hidden">
+      <body className="relative min-h-screen w-full overflow-auto">
         <div className="absolute inset-0 bg-gradient-to-br from-[#162f6e] via-[#1b2b54] to-[#08132e] bg-[length:1000%_1000%] animate-gradient-shift"></div>
         <div className="absolute inset-0 opacity-40 pointer-events-none">
           <div className="absolute top-10 left-10 w-96 h-96 bg-purple-500 rounded-full mix-blend-overlay filter blur-[100px] animate-pulse"></div>
