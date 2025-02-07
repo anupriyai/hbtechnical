@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Home() {
   const [text, setText] = useState("");
@@ -47,7 +48,22 @@ export default function Home() {
       <p className="text-lg max-w-xl">
         even when i'm busy with school, i always find time to watch tv shows—especially k-dramas! 💕
       </p>
-      <p className="text-2xl font-semibold mt-6 text-indigo-400">{text}</p>
+
+      {/* Buttons for navigation */}
+      <div className="mt-6 flex space-x-4">
+        <Link href="/reviews">
+          <button className="bg-indigo-300 hover:bg-indigo-400 text-indigo-500 font-semibold py-2 px-6 rounded-lg transition-all">
+            ⭐ my ratings
+          </button>
+        </Link>
+
+        <Link href="/wrapped">
+          <button className="bg-indigo-300 hover:bg-indigo-400 text-indigo-500 font-semibold py-2 px-6 rounded-lg transition-all">
+            🎬 my wrapped
+          </button>
+        </Link>
+      </div>
+      <p className="text-2xl font-semibold mt-8 text-indigo-400">{text}</p>
     </div>
   );
 }
