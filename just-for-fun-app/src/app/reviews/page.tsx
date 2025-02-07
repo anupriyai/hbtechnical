@@ -1,6 +1,8 @@
-"use client";
+"use client"; // ✅ Ensure this is a client component
+
 import { useState, useEffect } from "react";
 import Papa from "papaparse";
+import KDramaCard from "../components/KDramaCard";
 
 interface KDrama {
   Title: string;
@@ -20,13 +22,12 @@ export default function ReviewsPage() {
   const [years, setYears] = useState<string[]>([]);
   const [allTags, setAllTags] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
-  const [filteredTags, setFilteredTags] = useState<string[]>([]); 
-  
+  const [filteredTags, setFilteredTags] = useState<string[]>([]);
+
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [yearRange, setYearRange] = useState<[number, number]>([2000, 2024]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [searchTag, setSearchTag] = useState<string>("");
-
 
   useEffect(() => {
     fetch(CSV_URL)
@@ -37,7 +38,6 @@ export default function ReviewsPage() {
           skipEmptyLines: true,
           complete: (result) => {
             const rawData = result.data as KDrama[];
-            console.log("Parsed CSV Data:", rawData);
 
             if (!rawData || rawData.length === 0) {
               console.error("CSV data is empty or malformed!");
@@ -47,97 +47,97 @@ export default function ReviewsPage() {
             setKdramas(rawData);
             setFilteredDramas(rawData);
 
+            // Extract unique genres
             const uniqueGenres = new Set<string>();
             rawData.forEach((d) => {
-                if (d.Genres) {
+              if (d.Genres) {
                 d.Genres.split(/,\s*/).forEach((genre) => uniqueGenres.add(genre.trim()));
-                }
+              }
             });
-
-            console.log("Extracted Genres:", Array.from(uniqueGenres));
 
             setGenres(Array.from(uniqueGenres));
 
+            // Extract unique years
             const uniqueYears = [...new Set(rawData.map((d) => d["Year Released"]).filter((y) => y))];
+            setYears(uniqueYears);
 
+            // Extract tags
             const tagCount: Record<string, number> = {};
             rawData.forEach((d) => {
-                if (d.Tags) {
+              if (d.Tags) {
                 d.Tags.split(/,\s*/).forEach((tag) => {
-                    const trimmedTag = tag.trim();
-                    tagCount[trimmedTag] = (tagCount[trimmedTag] || 0) + 1;
+                  const trimmedTag = tag.trim();
+                  tagCount[trimmedTag] = (tagCount[trimmedTag] || 0) + 1;
                 });
-                }
+              }
             });
 
             const sortedTags = Object.entries(tagCount)
-                .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-                .map(([tag]) => tag);
+              .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+              .map(([tag]) => tag);
 
             setAllTags(sortedTags);
             setTags(sortedTags.slice(0, 10));
             setFilteredTags(sortedTags.slice(0, 10));
-            },
+          },
         });
-        });
-}, []);
+      });
+  }, []);
 
-useEffect(() => {
+  // **Filtering Logic**
+  useEffect(() => {
     let filtered = kdramas;
 
+    // **Genre Filtering**
     if (selectedGenres.length > 0) {
       filtered = filtered.filter((drama) =>
         drama.Genres?.split(/,\s*/).some((genre) => selectedGenres.includes(genre.trim()))
       );
     }
 
+    // **Year Range Filtering**
     filtered = filtered.filter(
       (drama) =>
         Number(drama["Year Released"]) >= yearRange[0] &&
         Number(drama["Year Released"]) <= yearRange[1]
     );
 
+    // **Tag Filtering**
     if (selectedTags.length > 0) {
       filtered = filtered.filter((drama) =>
         drama.Tags?.split(/,\s*/).some((tag) => selectedTags.includes(tag.trim()))
       );
     }
-  
+
     setFilteredDramas(filtered);
   }, [selectedGenres, yearRange, selectedTags, kdramas]);
-  
+
+  // **Search Tag Filtering**
   useEffect(() => {
     if (searchTag.trim() === "") {
       setFilteredTags(tags.slice(0, 10));
     } else {
       const searchedTags = allTags
         .filter((tag) => tag.toLowerCase().includes(searchTag.toLowerCase()))
-        .sort((a, b) => {
-          if (a.toLowerCase().startsWith(searchTag.toLowerCase()) && !b.toLowerCase().startsWith(searchTag.toLowerCase())) {
-            return -1;
-          }
-          if (!a.toLowerCase().startsWith(searchTag.toLowerCase()) && b.toLowerCase().startsWith(searchTag.toLowerCase())) {
-            return 1;
-          }
-          return a.localeCompare(b);
-        })
         .slice(0, 10);
-  
+
       setFilteredTags(searchedTags);
     }
   }, [searchTag, allTags]);
-  
 
   return (
     <div className="font-inconsolata flex min-h-screen">
+      {/* SIDEBAR FILTERS */}
       <aside className="w-1/4 bg-gray-900 text-white p-6 min-h-screen rounded-lg">
         <h2 className="text-2xl font-bold mb-4 text-indigo-400">filters</h2>
+
 
         <div className="mb-4">
         <h3 className="text-lg font-semibold text-indigo-300">genres</h3>
 
-        {genres.length === 0 ? ( 
-            <p className="text-gray-400">Loading genres...</p> 
+
+        {genres.length === 0 ? (
+            <p className="text-gray-400">Loading genres...</p>
         ) : (
             <div className="grid grid-cols-2 gap-2 mt-2">
             {genres.map((genre) => (
@@ -161,6 +161,7 @@ useEffect(() => {
         )}
         </div>
 
+
         <div className="mb-4">
             <h3 className="text-lg font-semibold text-indigo-300">year range: {yearRange[0]} - {yearRange[1]}</h3>
             <input
@@ -181,6 +182,7 @@ useEffect(() => {
             />
         </div>
 
+
         <div className="mb-4">
             <h3 className="text-lg font-semibold text-indigo-300">tags</h3>
             <input
@@ -190,6 +192,7 @@ useEffect(() => {
                 value={searchTag}
                 onChange={(e) => setSearchTag(e.target.value)}
             />
+
 
             <div className="grid grid-cols-2 gap-2 mt-2">
                 {filteredTags.map((tag) => (
@@ -213,28 +216,26 @@ useEffect(() => {
         </div>
         </aside>
 
+      {/* MAIN CONTENT */}
       <main className="w-3/4 p-6">
         <h1 className="text-3xl font-bold mb-4">my k-drama reviews</h1>
 
+        {/* DISPLAY FILTERED KDRAMAS */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredDramas.length > 0 ? (
             filteredDramas.map((drama, index) => (
-              <div key={index} className="bg-white bg-opacity-70 shadow-md rounded-lg p-4">
-                <img
-                  src={drama["Image URL"] || "https://via.placeholder.com/300"}
-                  alt={drama.Title}
-                  className="rounded-md w-full h-48 object-cover"
-                />
-                <h2 className="text-xl font-semibold mt-2 bg-gradient-to-r from-[#162f6e] via-[#533d99] to-[#1b2b54] inline-block text-transparent bg-clip-text">
-                  {drama.Title}
-                </h2>
-                <p className="text-gray-600">genre: {drama.Genres}</p>
-                <p className="text-gray-500 text-sm">year: {drama["Year Released"]}</p>
-                <p className="mt-2 text-gray-700">{drama.Review || "No review available yet."}</p>
-              </div>
+                <KDramaCard
+                key={index} // ✅ React key
+                id={drama.Title.replace(/\s+/g, "-").toLowerCase()} // ✅ Ensure this is passed properly
+                title={drama.Title}
+                imageUrl={drama["Image URL"]}
+                genres={drama.Genres}
+                year={drama["Year Released"]}
+                review={drama.Review || "No review available yet."}
+              />
             ))
           ) : (
-            <p className="text-gray-500">no k-dramas match your filters :(</p>
+            <p className="text-gray-500">no k-dramas match your filters 😢</p>
           )}
         </div>
       </main>
